@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+const { FileSplitter } = NativeModules;
 
 const LINKING_ERROR =
   `The package 'react-native-split-file' doesn't seem to be linked. Make sure: \n\n` +
@@ -24,6 +25,15 @@ const SplitFile = SplitFileModule
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return SplitFile.multiply(a, b);
+export async function splitFileIntoChunks(path: string, chunkSize: number) {
+  const chunkPaths = await SplitFile.splitFileIntoChunks(path, chunkSize);
+
+  // On iOS, the native code returns the paths as NSURL objects, so we need to convert them to strings
+  // if (Platform.OS === 'ios') {
+  //   return chunkPaths.map((chunkPath) => chunkPath.absoluteString);
+  // }
+
+  return chunkPaths;
 }
+
+export default { splitFileIntoChunks };

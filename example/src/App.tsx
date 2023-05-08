@@ -1,31 +1,47 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-split-file';
+import { ScrollView, Text } from 'react-native';
+import RNFS from 'react-native-fs';
+import { splitFileIntoChunks } from 'react-native-split-file';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const [result, setResult] = React.useState<string[] | undefined>();
 
   React.useEffect(() => {
-    multiply(3, 7).then(setResult);
+    doWork().then(setResult);
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <ScrollView style={{ flex: 1 }}>
+      <Text>Result:</Text>
+      {result?.map((s) => (
+        <Text key={s}>{s}</Text>
+      ))}
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
+const doWork = async () => {
+  console.log(`creating temp file to split...`);
+  const tempFile = await createTempFile();
+
+  console.log(`splitting ${tempFile} into chunks...`);
+  const chunkFilenames = await splitFileIntoChunks(tempFile, 10000);
+
+  console.log('done!', chunkFilenames);
+  return chunkFilenames;
+};
+
+const createTempFile = async () => {
+  const dest = `${RNFS.TemporaryDirectoryPath}${Date.now()}.tmp`;
+
+  // write a long file of sequential numbers
+  let str = '';
+  for (let i = 0; i < 100000; i++) {
+    str += `${i}\n`;
+  }
+
+  await RNFS.writeFile(dest, str);
+
+  return dest;
+};
