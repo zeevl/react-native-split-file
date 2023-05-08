@@ -25,7 +25,7 @@ const SplitFile = SplitFileModule
       }
     );
 
-export async function splitFileIntoChunks(path: string, chunkSize: number) {
+export async function splitFile(path: string, chunkSize: number) {
   const chunkPaths = await SplitFile.splitFileIntoChunks(path, chunkSize);
 
   // On iOS, the native code returns the paths as NSURL objects, so we need to convert them to strings
@@ -36,4 +36,4 @@ export async function splitFileIntoChunks(path: string, chunkSize: number) {
   return chunkPaths;
 }
 
-export default { splitFileIntoChunks };
+export default { splitFile };
