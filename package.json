@@ -78,7 +78,6 @@
   "engines": {
     "node": ">= 16.0.0"
   },
-  "packageManager": "^yarn@1.22.15",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
@@ -134,5 +133,6 @@
     "name": "RNSplitFileSpec",
     "type": "modules",
     "jsSrcsDir": "src"
-  }
+  },
+  "packageManager": "yarn@3.5.1"
 }
