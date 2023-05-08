@@ -6,6 +6,5 @@ import com.facebook.react.bridge.Promise
 
 abstract class SplitFileSpec internal constructor(context: ReactApplicationContext) :
   ReactContextBaseJavaModule(context) {
-
-  abstract fun multiply(a: Double, b: Double, promise: Promise)
+  abstract fun splitFileIntoChunks(path: String, chunkSize: Int, promise: Promise)
 }

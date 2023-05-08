@@ -22,14 +22,18 @@ export default function App() {
 }
 
 const doWork = async () => {
-  console.log(`creating temp file to split...`);
-  const tempFile = await createTempFile();
+  try {
+    console.log(`creating temp file to split...`);
+    const tempFile = await createTempFile();
 
-  console.log(`splitting ${tempFile} into chunks...`);
-  const chunkFilenames = await splitFileIntoChunks(tempFile, 10000);
+    console.log(`splitting ${tempFile} into chunks...`);
+    const chunkFilenames = await splitFileIntoChunks(tempFile, 10000);
 
-  console.log('done!', chunkFilenames);
-  return chunkFilenames;
+    console.log('done!', chunkFilenames);
+    return chunkFilenames;
+  } catch (e: any) {
+    console.error(e.message);
+  }
 };
 
 const createTempFile = async () => {

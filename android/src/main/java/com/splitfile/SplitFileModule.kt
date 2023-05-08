@@ -1,8 +1,16 @@
 package com.splitfile
 
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.WritableArray
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
+
+
 
 class SplitFileModule internal constructor(context: ReactApplicationContext) :
   SplitFileSpec(context) {
@@ -11,15 +19,9 @@ class SplitFileModule internal constructor(context: ReactApplicationContext) :
     return NAME
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  @ReactMethod
-  override fun multiply(a: Double, b: Double, promise: Promise) {
-    promise.resolve(a * b)
-  }
 
   @ReactMethod
-fun splitFileIntoChunks(path: String, chunkSize: Int, promise: Promise) {
+  override fun splitFileIntoChunks(path: String, chunkSize: Int, promise: Promise) {
     // Check if the file exists
     val file = File(path)
     if (!file.exists()) {
@@ -35,21 +37,22 @@ fun splitFileIntoChunks(path: String, chunkSize: Int, promise: Promise) {
 
     // Get the file size and calculate the number of chunks
     val fileSize = inputChannel.size()
-    val numberOfChunks = ceil(fileSize.toDouble() / chunkSize.toDouble()).toInt()
+    val numberOfChunks = kotlin.math.ceil(fileSize.toDouble() / chunkSize.toDouble()).toInt()
 
     // Initialize the output filenames array
+    val writableArray: WritableArray = Arguments.createArray()
     val outputFilenames = mutableListOf<String>()
 
     // Read and write chunks of data to output files
     for (i in 0 until numberOfChunks) {
         try {
             // Read a chunk of data from the input file
-            val chunkData = ByteBuffer.allocate(chunkSize)
+            val chunkData = java.nio.ByteBuffer.allocate(chunkSize)
             inputChannel.read(chunkData)
             chunkData.flip()
 
             val outputFilename = "$path.$i"
-            outputFilenames.add(outputFilename)
+            writableArray.pushString(outputFilename)
 
             // Write the chunk data to the output file
             val outputFile = File(outputFilename)
@@ -70,8 +73,11 @@ fun splitFileIntoChunks(path: String, chunkSize: Int, promise: Promise) {
     inputFileStream.close()
 
     // Return the array of output filenames
-    promise.resolve(outputFilenames.toTypedArray())
-}
+
+
+    promise.resolve(writableArray)
+    // promise.resolve("it worked")
+  }
 
 
   companion object {
