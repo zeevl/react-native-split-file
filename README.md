@@ -1,21 +1,26 @@
 # react-native-split-file
 
-splits a file into chunks of the given size
+A simple react-native library that can split a file into parts of an equal size, with the last part consisting of the remainder. 
+
+Designed to be used for multi-part uploads to S3. 
 
 ## Installation
 
 ```sh
 npm install react-native-split-file
+# or
+yarn add react-native-split-file
 ```
 
 ## Usage
 
 ```js
-import { multiply } from 'react-native-split-file';
+import { splitFile } from 'react-native-split-file';
 
 // ...
 
-const result = await multiply(3, 7);
+const result = await splitFile('/some/big/file.mov', 5000000);
+// result is an array of paths to the split files
 ```
 
 ## Contributing
