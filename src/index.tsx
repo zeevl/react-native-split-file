@@ -1,5 +1,4 @@
 import { NativeModules, Platform } from 'react-native';
-const { FileSplitter } = NativeModules;
 
 const LINKING_ERROR =
   `The package 'react-native-split-file' doesn't seem to be linked. Make sure: \n\n` +
