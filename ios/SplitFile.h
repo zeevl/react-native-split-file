@@ -1,6 +1,4 @@
-
 #ifdef RCT_NEW_ARCH_ENABLED
-TBD
 #import "RNSplitFileSpec.h"
 
 @interface SplitFile : NSObject <NativeSplitFileSpec>

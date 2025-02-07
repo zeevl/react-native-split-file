@@ -1,67 +1,23 @@
 #import "SplitFile.h"
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import "RNSplitFileSpec.h"
+#endif
+
 @implementation SplitFile
-RCT_EXPORT_MODULE();
+RCT_EXPORT_MODULE()
 
-// RCT_EXPORT_METHOD(splitFileIntoChunks
-//RCT_REMAP_METHOD(splitFileIntoChunks,
-//                 path:(NSString *)path
-//                 chunkSize:(NSInteger)chunkSize
-//                 onChunk:(RCTResponseSenderBlock)onChunk
-//                 onError:(RCTResponseErrorBlock)onError)
-//{
-//    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:path];
-//    if (!fileHandle) {
-//        if (error) {
-//            *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileNoSuchFileError userInfo:@{ NSFilePathErrorKey: path }];
-//        }
-//        return nil;
-//    }
-//
-//    unsigned long long fileSize = [fileHandle seekToEndOfFile];
-//    [fileHandle seekToFileOffset:0];
-//
-//    NSUInteger numberOfChunks = (NSUInteger)ceil((double)fileSize / (double)chunkSize);
-//    NSMutableArray<NSString *> *chunkPaths = [NSMutableArray arrayWithCapacity:numberOfChunks];
-//    unsigned long long currentOffset = 0;
-//
-//    for (NSUInteger chunkIndex = 0; chunkIndex < numberOfChunks; chunkIndex++) {
-//        NSString *chunkPath = [NSString stringWithFormat:@"%@.chunk%lu", path, (unsigned long)chunkIndex];
-//        NSFileHandle *chunkFileHandle = [NSFileHandle fileHandleForWritingAtPath:chunkPath];
-//        if (!chunkFileHandle) {
-//            if (error) {
-//                *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:@{ NSFilePathErrorKey: chunkPath }];
-//            }
-//            return nil;
-//        }
-//
-//        NSUInteger remainingChunkSize = chunkSize;
-//
-//        while (remainingChunkSize > 0) {
-//            NSUInteger bytesToRead = MIN(chunkSize, remainingChunkSize);
-//            NSData *chunkData = [fileHandle readDataOfLength:bytesToRead];
-//            if ([chunkData length] == 0) {
-//                break;
-//            }
-//            [chunkFileHandle writeData:chunkData];
-//            remainingChunkSize -= [chunkData length];
-//        }
-//
-//        [chunkFileHandle closeFile];
-//        [chunkPaths addObject:chunkPath];
-//        currentOffset += chunkSize;
-//        [fileHandle seekToFileOffset:currentOffset];
-//    }
-//
-//    [fileHandle closeFile];
-//    return [chunkPaths copy];
-//}
-
-
+#ifdef RCT_NEW_ARCH_ENABLED
+- (void)splitFileIntoChunks:(NSString *)path
+                 chunkSize:(double)chunkSize
+                 resolve:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject
+#else
 RCT_EXPORT_METHOD(splitFileIntoChunks:(NSString *)path
                   chunkSize:(nonnull NSNumber *)chunkSize
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+#endif
 {
     // Check if the file exists
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -117,4 +73,14 @@ RCT_EXPORT_METHOD(splitFileIntoChunks:(NSString *)path
     // Return the array of output filenames
     resolve(outputFilenames);
 }
+
+// Don't compile this code when we build for the old architecture.
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeSplitFileSpecJSI>(params);
+}
+#endif
+
 @end

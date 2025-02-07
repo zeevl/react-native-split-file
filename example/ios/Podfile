@@ -26,6 +26,8 @@ target 'SplitFileExample' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+  flags[:fabric_enabled] = true
+  flags[:hermes_enabled] = true
 
   use_react_native!(
     :path => config[:reactNativePath],
