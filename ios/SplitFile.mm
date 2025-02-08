@@ -1,25 +1,12 @@
 #import "SplitFile.h"
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNSplitFileSpec.h"
-#import <React/RCTBridgeModule.h>
-#import <React-Core/RCTTurboModule.h>
-#endif
-
 @implementation SplitFile
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
 - (void)splitFileIntoChunks:(NSString *)path
                  chunkSize:(double)chunkSize
                  resolve:(RCTPromiseResolveBlock)resolve
                  reject:(RCTPromiseRejectBlock)reject
-#else
-RCT_EXPORT_METHOD(splitFileIntoChunks:(NSString *)path
-                  chunkSize:(nonnull NSNumber *)chunkSize
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-#endif
 {
     // Check if the file exists
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -76,13 +63,9 @@ RCT_EXPORT_METHOD(splitFileIntoChunks:(NSString *)path
     resolve(outputFilenames);
 }
 
-// Don't compile this code when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
     return std::make_shared<facebook::react::NativeSplitFileSpecJSI>(params);
 }
-#endif
-
 @end
