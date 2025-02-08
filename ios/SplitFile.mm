@@ -2,6 +2,8 @@
 
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "RNSplitFileSpec.h"
+#import <React/RCTBridgeModule.h>
+#import <React-Core/RCTTurboModule.h>
 #endif
 
 @implementation SplitFile
